@@ -38,33 +38,35 @@ NTSTATUS Main() {
 		return STATUS_FAILED_DRIVER_ENTRY;
 	}
 
-	// MiAllocateVad (yes I'm this lazy)
-	PBYTE addr = (PBYTE)FindPatternImage(base, "\x41\xB8\x00\x00\x00\x00\x48\x8B\xD6\x49\x8B\xCE\xE8\x00\x00\x00\x00\x48\x8B\xD8", "xx????xxxxxxx????xxx");
-	if (!addr) {
-		printf("! failed to find MiAllocateVad !\n");
+	// MiAllocateVad
+	PBYTE addr = (PBYTE)FindPatternImage(base, "\x48\x89\x5C\x24\x00\x48\x89\x6C\x24\x00\x48\x89\x74\x24\x00\x57\x48\x83\xEC\x30\x48\x8B\xE9\x41\x8B\xF8\xB9\x00\x00\x00\x00\x48\x8B\xF2\x8B\xD1\x41\xB8\x00\x00\x00\x00", "xxxx?xxxx?xxxx?xxxxxxxxxxxx????xxxxxxx????");
+	if (!addr) 
+	{
+		DbgPrintEx(0, 0, "[driver] MiAllocateVad not found!\n");
 		return STATUS_FAILED_DRIVER_ENTRY;
 	}
-
-	*(PVOID *)&MiAllocateVad = RELATIVE_ADDR(addr + 12, 5);
-
+ 
+	*(PVOID*)&MiAllocateVad = addr;
+ 
 	// MiInsertVadCharges
-	addr = FindPatternImage(base, "\xE8\x00\x00\x00\x00\x8B\xF8\x85\xC0\x78\x31", "x????xxxxxx");
-	if (!addr) {
-		printf("! failed to find MiInsertVadCharges !\n");
+	addr = FindPatternImage(base, "\x48\x89\x5C\x24\x00\x48\x89\x6C\x24\x00\x48\x89\x74\x24\x00\x57\x41\x54\x41\x55\x41\x56\x41\x57\x48\x83\xEC\x20\x8B\x41\x18\x48\x8B\xD9\x44\x0F\xB6\x71\x00\x45\x33\xE4", "xxxx?xxxx?xxxx?xxxxxxxxxxxxxxxxxxxxxxx?xxx");
+	if (!addr) 
+	{
+		DbgPrintEx(0, 0, "[driver] MiInsertVadCharges not found!\n");
 		return STATUS_FAILED_DRIVER_ENTRY;
 	}
-
-	*(PVOID *)&MiInsertVadCharges = RELATIVE_ADDR(addr, 5);
-
+ 
+	*(PVOID*)&MiInsertVadCharges = addr;
+ 
 	// MiInsertVad
-	addr = FindPatternImage(base, "\x48\x2B\xD1\x48\xFF\xC0\x48\x03\xC2", "xxxxxxxxx");
-	if (!addr) {
-		printf("! failed to find MiInsertVad !\n");
+	addr = FindPatternImage(base, "\x48\x89\x5C\x24\x00\x48\x89\x6C\x24\x00\x48\x89\x74\x24\x00\x57\x41\x54\x41\x55\x41\x56\x41\x57\x48\x83\xEC\x20\x8B\x41\x1C\x33\xED\x0F\xB6\x59\x21", "xxxx?xxxx?xxxx?xxxxxxxxxxxxxxxxxxxxxx");
+	if (!addr) 
+	{
+		DbgPrintEx(0, 0, "[driver] MiInsertVad not found!\n");
 		return STATUS_FAILED_DRIVER_ENTRY;
 	}
-
-	for (; *addr != 0xE8 || *(addr + 5) != 0x8B; ++addr);
-	*(PVOID *)&MiInsertVad = RELATIVE_ADDR(addr, 5);
+ 
+	*(PVOID*)&MiInsertVad = addr;
 
 	// Intended be manually mapped
 	addr = FindPatternImage(base, "\x48\x8B\x05\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\xC8\x85\xC0\x78\x40", "xxx????x????xxxxxx");
