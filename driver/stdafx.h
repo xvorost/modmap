@@ -5,7 +5,7 @@
 #include <ntimage.h>
 #include <minwindef.h>
 
-#define printf(fmt, ...) DbgPrint("[dbg] "fmt, ##__VA_ARGS__)
+#define printf(fmt, ...) DbgPrintEx(0, 0, "[dbg] "fmt, ##__VA_ARGS__)
 #define HANDLE_REQUEST(name, args) \
     case RequestType##name: {                                     \
         args safe = { 0 };                                        \
