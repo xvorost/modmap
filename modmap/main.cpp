@@ -23,7 +23,8 @@ INT main(INT argc, LPCSTR *argv) {
 
 	printf("\n[-] entry point: %p\n", entry);
 
-	if (!Hijack::HijackViaHook(process, entry, L"user32.dll", "PeekMessageW")) {
+	// GetMessageW, PeekMessageW
+	if (!Hijack::HijackViaHook(process, entry, L"user32.dll", "TranslateMessage")) {
 		return 1;
 	}
 	
