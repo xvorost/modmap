@@ -17,4 +17,4 @@ DLL manual mapper that will forcefully extend the size of a pre-existing module 
 
 ## Note
 
-This was only tested on Windows 10 1803, 1809, 1903, 1909 and is intended for a x64 target process and DLL.
+Windows 10 21H1 / Windows 11 and is intended for a x64 target process and DLL.
